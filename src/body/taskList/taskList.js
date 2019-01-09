@@ -1,30 +1,32 @@
 import React from 'react';
-import './employeeList.css';
-import EmployeeDetail from '../employeeDetail/employeeDetail';
+import './taskList.css';
+import TaskDetail from '../taskDetail/taskDetail';
 import { Table, Button, Modal, ModalHeader, ModalBody, ModalFooter, Form, FormGroup, Label, Input, Fade } from 'reactstrap';
+import Datetime from 'react-datetime';
 
-class EmployeeList extends React.Component {
+class TaskList extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      employees: [],
+      tasks: [],
       modal: false,
       fadeIn: false,
       postResponse:'',
-      name:'',
-      phone:''
+      taskText:'',
+      deadline: new Date()
     };
-    this.url = 'http://127.0.0.1:8000/salesmen/employees';
+    this.url = 'http://127.0.0.1:8000/salesmen/tasks';
     this.toggle = this.toggle.bind(this);
-    this.handleNameChange = this.handleNameChange.bind(this);
-    this.handlePhoneChange = this.handlePhoneChange.bind(this);
-    this.saveEmployee = this.saveEmployee.bind(this);
+    this.handleTaskChange = this.handleTaskChange.bind(this);
+    this.handleDeadlineChange = this.handleDeadlineChange.bind(this);
+    this.saveTask = this.saveTask.bind(this);
   }
 
-  componentDidMount(){
+ componentDidMount(){
     fetch(this.url)
     .then (response => response.json())
-    .then (employees => this.setState({employees}))
+    .then (tasks => this.setState({tasks}))
+    console.log(this.state)
   }
 
   toggle(e) {
@@ -35,23 +37,23 @@ class EmployeeList extends React.Component {
     e.stopPropagation(); 
   }
 
-  handleNameChange(e) {
-    this.setState({name: e.target.value});
+  handleTaskChange(e) {
+    this.setState({taskText: e.target.value});
   }
  
-  handlePhoneChange(e) {
-    this.setState({phone: e.target.value});
+  handleDeadlineChange(date) {
+    this.setState({deadline: date});
   }
 
-  saveEmployee(e) {
+  saveTask(e) {
     e.preventDefault();
-    var employee = {
-      name: this.state.name,
-      phone:this.state.phone
+    var task = {
+      task_text: this.state.taskText,
+      deadline: this.state.deadline
     }
     fetch(this.url, {
       method: 'POST', // or 'PUT'
-      body: JSON.stringify(employee), // data can be `string` or {object}!
+      body: JSON.stringify(task), // data can be `string` or {object}!
       headers:{
         'Content-Type': 'application/json'
       }
@@ -69,28 +71,27 @@ class EmployeeList extends React.Component {
         <Table>
           <thead>
             <tr>
-              <th>Full Name</th>
-              <th>Phone</th>
-                <th>
-                <Button color="primary" onClick={this.toggle} size="sm">Новый сотрудник</Button>
-                </th>
+              <th>Task</th>
+              <th>Created</th>
+              <th>Deadline</th>
+              <th><Button color="primary" onClick={this.toggle} size="sm">Новое задание</Button></th>
             </tr>
           </thead>
           <tbody>
-              {this.state.employees.map(employee => <EmployeeDetail key={employee.id} employee={employee}/>)}
+            {this.state.tasks.map(task => <TaskDetail key={task.id} task={task}/>)}
           </tbody>
         </Table>
         <Modal isOpen={this.state.modal} toggle={this.toggle}>
-          <ModalHeader toggle={this.toggle}>Новый сотрудник</ModalHeader>
+          <ModalHeader toggle={this.toggle}>Новое задание</ModalHeader>
           <ModalBody>
             <Form>
               <FormGroup>
-                <Label>Имя</Label>
-                <Input type="text" value={this.state.name} onChange={this.handleNameChange} />
+                <Label>Задание</Label>
+                <Input type="text" value={this.state.taskText} onChange={this.handleTaskChange} />
               </FormGroup>
               <FormGroup>
-                <Label>Телефон</Label>
-                <Input type="text" value={this.state.phone} onChange={this.handlePhoneChange} />
+                <Label>Срок выполнения</Label>
+                <Datetime  value={this.state.deadline} onChange={this.handleDeadlineChange}/>
               </FormGroup>
             </Form>
             <Fade in={this.state.fadeIn} tag="p" className="mt-3">
@@ -98,7 +99,7 @@ class EmployeeList extends React.Component {
             </Fade>
           </ModalBody>
           <ModalFooter>
-            <Button color="primary" onClick={this.saveEmployee}>Сохранить</Button>
+            <Button color="primary" onClick={this.saveTask}>Сохранить</Button>
             <Button color="secondary" onClick={this.toggle}>Отмена</Button>
           </ModalFooter>
         </Modal>       
@@ -107,4 +108,4 @@ class EmployeeList extends React.Component {
   }
 }
 
-export default EmployeeList;
+export default TaskList;
