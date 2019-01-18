@@ -62,6 +62,10 @@ class EmployeeList extends React.Component {
       postResponse: error}));
   }
 
+  myCallback = (dataFromEmployeeDetail, employeeState) => {
+    this.props.callback(dataFromEmployeeDetail, employeeState);
+  }
+
   render() {
     console.log(this.state)
     return (
@@ -69,15 +73,17 @@ class EmployeeList extends React.Component {
         <Table>
           <thead>
             <tr>
+              <th>
+                <Button color="primary" onClick={this.toggle} size="sm">Новый сотрудник</Button>
+              </th>
+            </tr>
+            <tr>
               <th>Full Name</th>
               <th>Phone</th>
-                <th>
-                <Button color="primary" onClick={this.toggle} size="sm">Новый сотрудник</Button>
-                </th>
             </tr>
           </thead>
           <tbody>
-              {this.state.employees.map(employee => <EmployeeDetail key={employee.id} employee={employee}/>)}
+              {this.state.employees.map(employee => <EmployeeDetail callback={this.myCallback} key={employee.id} employee={employee}/>)}
           </tbody>
         </Table>
         <Modal isOpen={this.state.modal} toggle={this.toggle}>
