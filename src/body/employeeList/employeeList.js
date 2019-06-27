@@ -59,7 +59,8 @@ class EmployeeList extends React.Component {
     .then(response => this.setState({fadeIn: true,
       postResponse: JSON.stringify(response)}))
     .catch(error => this.setState({fadeIn: true,
-      postResponse: error}));
+      postResponse: error})).then( this.componentDidMount());
+   
   }
 
   myCallback = (dataFromEmployeeDetail, employeeState) => {
@@ -78,8 +79,8 @@ class EmployeeList extends React.Component {
               </th>
             </tr>
             <tr>
-              <th>Full Name</th>
-              <th>Phone</th>
+              <th>Имя</th>
+              <th>Номер телефона</th>
             </tr>
           </thead>
           <tbody>
